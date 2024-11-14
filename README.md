@@ -1,6 +1,10 @@
 # DGHashtagTextEditor
 DGHashtagTextEditor is a highly customizable SwiftUI component designed for handling rich text with hashtags and mentions, making it perfect for social media apps and other interactive text-based interfaces. This editor provides a flexible API to create interactive text with seamless hashtag and mention detection, custom font and line-height options, and dynamic size management.
 
+
+<img src="https://github.com/user-attachments/assets/2b15c584-9b4a-43ca-bb11-f393ee3e67bd" width=300 />
+
+
 ## Key Features
 Custom Font Support: Use any font you want to customize the look and feel of your text editor.
 Adjustable Line Height: Set line height to control the vertical spacing of your text.
