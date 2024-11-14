@@ -6,11 +6,13 @@ DGHashtagTextEditor is a highly customizable SwiftUI component designed for hand
 
 
 ## Key Features
-Custom Font Support: Use any font you want to customize the look and feel of your text editor.
-Adjustable Line Height: Set line height to control the vertical spacing of your text.
-Dynamic Content Size Subscription: Easily subscribe to content size changes, enabling dynamic text editor sizing for responsive layouts.
-Hashtag and Mention Detection: Automatically detects hashtags and mentions within the text, simplifying interactive text handling.
-Tap Actions for Hashtags and Mentions: Subscribe to tap events on hashtags and mentions, allowing for interactive and actionable text elements.
+- Custom Font Support: Use any font you want to customize the look and feel of your text editor.
+- Adjustable Line Height: Set line height to control the vertical spacing of your text.
+- Dynamic Content Size Subscription: Easily subscribe to content size changes, enabling dynamic text editor sizing for responsive layouts.
+- Hashtag and Mention Detection: Automatically detects hashtags and mentions within the text, simplifying interactive text handling.
+- Tap Actions for Hashtags and Mentions: Subscribe to tap events on hashtags and mentions, allowing for interactive and actionable text elements.
+
+
 DGHashtagTextEditor provides a seamless way to add rich, customizable text editing capabilities to your SwiftUI projects, with a focus on social interactions and responsiveness.
 
 
