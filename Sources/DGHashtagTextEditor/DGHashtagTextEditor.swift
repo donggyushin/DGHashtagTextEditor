@@ -115,8 +115,8 @@ public extension DGHashtagTextEditor {
 }
 
 public protocol DGHashtagTextViewDelegate: AnyObject {
-    func tapHashtag(_ hashtagTextView: DGHashtagTextView, didSelect hashtag: String)
-    func tapMention(_ mentionTextView: DGHashtagTextView, didSelect mention: String)
+    func tapHashtag(_ hashtagTextView: DGHashtagTextView, didSelect hashtag: String) async
+    func tapMention(_ mentionTextView: DGHashtagTextView, didSelect mention: String) async
 }
 
 public class DGHashtagTextView: UITextView {
@@ -225,26 +225,31 @@ public class DGHashtagTextView: UITextView {
         self.attributedText = attrString
     }
     
+    private var touchesEndedTask: Task<Void, Never>?
     override public func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
-        let location = touch.location(in: self)
-        
-        // 터치된 위치의 텍스트 인덱스를 얻음
-        if let textPosition = closestPosition(to: location),
-           let range = tokenizer.rangeEnclosingPosition(textPosition, with: .word, inDirection: UITextDirection.storage(.forward)) {
-            let startIndex = offset(from: beginningOfDocument, to: range.start)
-            let nsRange = NSRange(location: startIndex, length: offset(from: range.start, to: range.end))
+        guard touchesEndedTask == nil else { return }
+        touchesEndedTask = Task {
+            guard let touch = touches.first else { return }
+            let location = touch.location(in: self)
             
-            if let index = attributedText.attribute(customHashtagAttribute, at: nsRange.location, effectiveRange: nil) as? Int {
-                if let hashtagArr {
-                    hashtagTextViewDelegate?.tapHashtag(self, didSelect: hashtagArr[index])
-                }
-            } else if let index = attributedText.attribute(customMentionAttribute, at: nsRange.location, effectiveRange: nil) as? Int {
-                if let mentionArr {
-                    hashtagTextViewDelegate?.tapMention(self, didSelect: mentionArr[index])
+            // 터치된 위치의 텍스트 인덱스를 얻음
+            if let textPosition = closestPosition(to: location),
+               let range = tokenizer.rangeEnclosingPosition(textPosition, with: .word, inDirection: UITextDirection.storage(.forward)) {
+                let startIndex = offset(from: beginningOfDocument, to: range.start)
+                let nsRange = NSRange(location: startIndex, length: offset(from: range.start, to: range.end))
+                
+                if let index = attributedText.attribute(customHashtagAttribute, at: nsRange.location, effectiveRange: nil) as? Int {
+                    if let hashtagArr {
+                        await hashtagTextViewDelegate?.tapHashtag(self, didSelect: hashtagArr[index])
+                    }
+                } else if let index = attributedText.attribute(customMentionAttribute, at: nsRange.location, effectiveRange: nil) as? Int {
+                    if let mentionArr {
+                        await hashtagTextViewDelegate?.tapMention(self, didSelect: mentionArr[index])
+                    }
                 }
             }
+            super.touchesEnded(touches, with: event)
+            touchesEndedTask = nil
         }
-        super.touchesEnded(touches, with: event)
     }
 }
