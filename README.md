@@ -44,7 +44,7 @@ Normally you'll want to depend on the DGLineHeight target:
             lineHeight: 23,
             mentionColor: .gray,
             hashtagColor: .systemBlue,
-            isEditable: true
+            isEditable: true // <-- set false when you want to receive on tap action
         )
         .onTapHashtag { hashtag in
             print("user tapped hashtag")
