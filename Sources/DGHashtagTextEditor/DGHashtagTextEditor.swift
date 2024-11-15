@@ -8,10 +8,12 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     @Binding var text: String
     
     let textColor: UIColor
+    let placeholder: String?
+    let placeholderColor: UIColor
     let lineHeight: CGFloat?
     let mentionColor: UIColor?
     let hashtagColor: UIColor?
-    let font: UIFont?
+    let font: UIFont
     let isSelectable: Bool
     let isEditable: Bool
     let tintColor: UIColor?
@@ -22,8 +24,10 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     
     public init(
         text: Binding<String>,
-        font: UIFont? = nil,
+        font: UIFont = .preferredFont(forTextStyle: .body),
         textColor: UIColor = .label,
+        placeholder: String? = nil,
+        placeholderColor: UIColor = .placeholderText,
         lineHeight: CGFloat? = nil,
         mentionColor: UIColor? = nil,
         hashtagColor: UIColor? = nil,
@@ -40,12 +44,15 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         self.isSelectable = isSelectable
         self.isEditable = isEditable
         self.tintColor = tintColor
+        self.placeholder = placeholder
+        self.placeholderColor = placeholderColor
     }
     
     public func makeUIView(context: Context) -> DGHashtagTextView {
         let view = DGHashtagTextView()
         view.hashtagTextViewDelegate = context.coordinator
         view.delegate = context.coordinator
+        view.backgroundColor = .clear
         DispatchQueue.main.async {
             contentSizeAction?(view.contentsSize())
         }
@@ -55,14 +62,19 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     public func updateUIView(_ uiView: DGHashtagTextView, context: Context) {
         uiView.text = text
         uiView.font = font
+        uiView.isSelectable = isSelectable
+        uiView.isEditable = isEditable
+        uiView.tintColor = tintColor
+        
         uiView.lineHeight = lineHeight
         uiView.mentionColor = mentionColor
         uiView.hashtagColor = hashtagColor
         uiView.foregroundColor = textColor
         uiView.adjustAttributes()
-        uiView.isSelectable = isSelectable
-        uiView.isEditable = isEditable
-        uiView.tintColor = tintColor
+        uiView.placeholderLabel.font = font
+        uiView.placeholderLabel.text = placeholder
+        uiView.placeholderLabel.textColor = placeholderColor
+        uiView.placeholderLabel.isHidden = !text.isEmpty
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -86,7 +98,6 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         
         public func textViewDidChange(_ textView: UITextView) {
             parent.text = textView.text
-            
             if let dghashtagTextView = textView as? DGHashtagTextView {
                 parent.contentSizeAction?(dghashtagTextView.contentsSize())
             }
@@ -128,13 +139,19 @@ public class DGHashtagTextView: UITextView {
     public var hashtagColor: UIColor?
     public var foregroundColor: UIColor?
     
+    let placeholderLabel = UILabel()
+    
     let customHashtagAttribute = NSAttributedString.Key("CustomHashtagAttribute")
     let customMentionAttribute = NSAttributedString.Key("CustomMentionAttribute")
     
     public init() {
         super.init(frame: .zero, textContainer: nil)
-        textColor = UIColor.label
         textContainerInset = .zero
+        
+        addSubview(placeholderLabel)
+        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true 
+        placeholderLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
     }
     
     required init?(coder: NSCoder) {
