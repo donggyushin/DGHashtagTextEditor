@@ -151,7 +151,7 @@ public class DGHashtagTextView: UITextView {
         addSubview(placeholderLabel)
         placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
         placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true 
-        placeholderLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: 1).isActive = true
     }
     
     required init?(coder: NSCoder) {

@@ -9,10 +9,10 @@ import SwiftUI
 
 struct DGHashtagTextEditorPreviewTest: View {
     
-    @State var text: String = "Placeholder Text"
+    @State var text: String = ""
     
     var body: some View {
-        DGHashtagTextEditor(text: $text, placeholder: "Placeholder Text")
+        DGHashtagTextEditor(text: $text, placeholder: "PlaceHolder")
             .frame(height: 21)
             .padding()
     }
