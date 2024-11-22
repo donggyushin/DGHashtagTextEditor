@@ -16,6 +16,7 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     let isEditable: Bool
     let tintColor: UIColor?
     let onlyForMention: String?
+    var scrollEnabled: Bool = true
     
     var tapHashtagAction: ((String) -> Void)?
     var tapMentionAction: ((String) -> Void)?
@@ -66,6 +67,7 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         uiView.foregroundColor = textColor
         uiView.adjustAttributes()
         uiView.onlyForMention = onlyForMention
+        uiView.isScrollEnabled = scrollEnabled
         DispatchQueue.main.async {
             contentSizeAction?(uiView.contentsSize())
         }
@@ -115,6 +117,12 @@ public extension DGHashtagTextEditor {
     func onContentSizeChanged(perform action: @escaping (CGSize) -> Void) -> Self {
         var copy = self
         copy.contentSizeAction = action
+        return copy
+    }
+    
+    func setScrollEnabled(_ value: Bool) -> Self {
+        var copy = self
+        copy.scrollEnabled = value
         return copy
     }
 }
