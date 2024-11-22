@@ -50,9 +50,6 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         view.hashtagTextViewDelegate = context.coordinator
         view.delegate = context.coordinator
         view.backgroundColor = .clear
-        DispatchQueue.main.async {
-            contentSizeAction?(view.contentsSize())
-        }
         return view
     }
     
@@ -69,6 +66,9 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         uiView.foregroundColor = textColor
         uiView.adjustAttributes()
         uiView.onlyForMention = onlyForMention
+        DispatchQueue.main.async {
+            contentSizeAction?(uiView.contentsSize())
+        }
     }
     
     public func makeCoordinator() -> Coordinator {
