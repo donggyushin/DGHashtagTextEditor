@@ -26,7 +26,7 @@ Once you have your Swift package set up, adding `DGHashtagTextEditor` as a depen
 
 ```
 dependencies: [
-   .package(url: "https://github.com/donggyushin/DGHashtagTextEditor.git", .upToNextMajor(from: "1.0.2"))
+   .package(url: "https://github.com/donggyushin/DGHashtagTextEditor.git", .upToNextMajor(from: "1.1.0"))
 ]
 ```
 

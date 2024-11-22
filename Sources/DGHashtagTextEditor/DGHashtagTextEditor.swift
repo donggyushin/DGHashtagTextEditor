@@ -8,8 +8,6 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     @Binding var text: String
     
     let textColor: UIColor
-    let placeholder: String?
-    let placeholderColor: UIColor
     let lineHeight: CGFloat?
     let mentionColor: UIColor?
     let hashtagColor: UIColor?
@@ -17,6 +15,7 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
     let isSelectable: Bool
     let isEditable: Bool
     let tintColor: UIColor?
+    let onlyForMention: String?
     
     var tapHashtagAction: ((String) -> Void)?
     var tapMentionAction: ((String) -> Void)?
@@ -26,14 +25,13 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         text: Binding<String>,
         font: UIFont = .preferredFont(forTextStyle: .body),
         textColor: UIColor = .label,
-        placeholder: String? = nil,
-        placeholderColor: UIColor = .placeholderText,
         lineHeight: CGFloat? = nil,
         mentionColor: UIColor? = nil,
         hashtagColor: UIColor? = nil,
         isSelectable: Bool = true,
         isEditable: Bool = true,
-        tintColor: UIColor? = nil
+        tintColor: UIColor? = nil,
+        onlyForMention: String? = nil
     ) {
         _text = text
         self.textColor = textColor
@@ -44,8 +42,7 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         self.isSelectable = isSelectable
         self.isEditable = isEditable
         self.tintColor = tintColor
-        self.placeholder = placeholder
-        self.placeholderColor = placeholderColor
+        self.onlyForMention = onlyForMention
     }
     
     public func makeUIView(context: Context) -> DGHashtagTextView {
@@ -71,10 +68,7 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         uiView.hashtagColor = hashtagColor
         uiView.foregroundColor = textColor
         uiView.adjustAttributes()
-        uiView.placeholderLabel.font = font
-        uiView.placeholderLabel.text = placeholder
-        uiView.placeholderLabel.textColor = placeholderColor
-        uiView.placeholderLabel.isHidden = !text.isEmpty
+        uiView.onlyForMention = onlyForMention
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -138,8 +132,7 @@ public class DGHashtagTextView: UITextView {
     public var mentionColor: UIColor?
     public var hashtagColor: UIColor?
     public var foregroundColor: UIColor?
-    
-    let placeholderLabel = UILabel()
+    public var onlyForMention: String?
     
     let customHashtagAttribute = NSAttributedString.Key("CustomHashtagAttribute")
     let customMentionAttribute = NSAttributedString.Key("CustomMentionAttribute")
@@ -147,11 +140,6 @@ public class DGHashtagTextView: UITextView {
     public init() {
         super.init(frame: .zero, textContainer: nil)
         textContainerInset = .zero
-        
-        addSubview(placeholderLabel)
-        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
-        placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4).isActive = true 
-        placeholderLabel.topAnchor.constraint(equalTo: topAnchor, constant: 1).isActive = true
     }
     
     required init?(coder: NSCoder) {
@@ -187,6 +175,18 @@ public class DGHashtagTextView: UITextView {
         let results = hashtagDetector?.matches(in: self.text,
                                                options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds,
                                                range: NSMakeRange(0, self.text.utf16.count))
+        
+        if let onlyForMention, let mentionColor {
+            
+            if self.text.hasPrefix(onlyForMention) {
+                let range = NSMakeRange(0, onlyForMention.count)
+                attrString.addAttribute(.foregroundColor, value: mentionColor, range: range)
+                attrString.addAttribute(customMentionAttribute, value: onlyForMention, range: range)
+            }
+          
+            self.attributedText = attrString
+            return
+        }
 
         hashtagArr = results?.compactMap{ [weak self] in (self?.text as? NSString)?.substring(with: $0.range(at: 1)) }
         
