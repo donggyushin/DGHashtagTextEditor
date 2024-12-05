@@ -88,9 +88,10 @@ extension DGHashtagTextView {
             parent.textChangeAction?(textView.text)
             
             if let hashtagTextView = textView as? HashtagTextView {
-                hashtagTextView.resolveBasicStyle(font: parent.font, foregroundColor: parent.foregroundColor, lineHeight: parent.lineHeight)
-                hashtagTextView.resolveHashTags(color: parent.tagColor)
-                hashtagTextView.resolveMentions(color: parent.mentionColor)
+                var attrString = hashtagTextView.resolveBasicStyle(font: parent.font, foregroundColor: parent.foregroundColor, lineHeight: parent.lineHeight)
+                attrString = hashtagTextView.resolveHashTags(attrString: attrString, color: parent.tagColor)
+                attrString = hashtagTextView.resolveMentions(attrString: attrString, color: parent.mentionColor)
+                hashtagTextView.attributedText = attrString
             }
         }
     }
@@ -102,7 +103,7 @@ public class HashtagTextView: UITextView {
     var hashtagArr: [String]?
     var mentionArr: [String]?
     
-    func resolveBasicStyle(font: UIFont?, foregroundColor: UIColor?, lineHeight: CGFloat?) {
+    func resolveBasicStyle(font: UIFont?, foregroundColor: UIColor?, lineHeight: CGFloat?) -> NSMutableAttributedString {
         let nsText: NSString = self.text as NSString
         let attrString = NSMutableAttributedString(string: nsText as String)
         
@@ -121,13 +122,12 @@ public class HashtagTextView: UITextView {
             attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, nsText.length))
         }
         
-        self.attributedText = attrString
+        return attrString
     }
     
     // https://withthemilkyway.tistory.com/34
-    func resolveHashTags(color: UIColor?) {
+    func resolveHashTags(attrString: NSMutableAttributedString, color: UIColor?) -> NSMutableAttributedString {
         let nsText: NSString = self.text as NSString
-        let attrString = NSMutableAttributedString(string: nsText as String)
         let hashtagDetector = try? NSRegularExpression(pattern: "#(\\w+)", options: NSRegularExpression.Options.caseInsensitive)
         let results = hashtagDetector?.matches(in: self.text,
                                                options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds,
@@ -150,12 +150,11 @@ public class HashtagTextView: UITextView {
             }
         }
 
-        self.attributedText = attrString
+        return attrString
     }
     
-    func resolveMentions(color: UIColor?) {
+    func resolveMentions(attrString: NSMutableAttributedString, color: UIColor?) -> NSMutableAttributedString {
         let nsText: NSString = self.text as NSString
-        let attrString = NSMutableAttributedString(string: nsText as String)
         let hashtagDetector = try? NSRegularExpression(pattern: "@(\\w+)", options: NSRegularExpression.Options.caseInsensitive)
         let results = hashtagDetector?.matches(in: self.text,
                                                options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds,
@@ -178,6 +177,6 @@ public class HashtagTextView: UITextView {
             }
         }
 
-        self.attributedText = attrString
+        return attrString
     }
 }
