@@ -15,6 +15,8 @@ public struct DGHashtagTextView: UIViewRepresentable {
     var tagColor: UIColor?
     var mentionColor: UIColor?
     
+    public init() { }
+    
     public func makeUIView(context: Context) -> HashtagTextView {
         let view = HashtagTextView()
         view.delegate = context.coordinator
