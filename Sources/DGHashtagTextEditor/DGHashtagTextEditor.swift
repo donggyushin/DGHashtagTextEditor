@@ -65,9 +65,9 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
         uiView.mentionColor = mentionColor
         uiView.hashtagColor = hashtagColor
         uiView.foregroundColor = textColor
-        uiView.adjustAttributes()
         uiView.onlyForMention = onlyForMention
         uiView.isScrollEnabled = scrollEnabled
+        uiView.adjustAttributes()
         DispatchQueue.main.async {
             contentSizeAction?(uiView.contentsSize())
         }
@@ -96,6 +96,11 @@ public struct DGHashtagTextEditor: UIViewRepresentable {
             parent.text = textView.text
             if let dghashtagTextView = textView as? DGHashtagTextView {
                 parent.contentSizeAction?(dghashtagTextView.contentsSize())
+            }
+            
+            if let selectedRange = textView.selectedTextRange {
+                let cursorPosition = textView.offset(from: textView.beginningOfDocument, to: selectedRange.start)
+                print(cursorPosition)
             }
         }
     }

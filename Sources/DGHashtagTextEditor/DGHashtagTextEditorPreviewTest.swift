@@ -9,15 +9,15 @@ import SwiftUI
 
 struct DGHashtagTextEditorPreviewTest: View {
     
-    @State var text: String = "@Mention"
+    @State var text: String = ""
     
     var body: some View {
         DGHashtagTextEditor(
             text: $text,
             font: .systemFont(ofSize: 20),
             lineHeight: 30,
-            mentionColor: .gray,
-            hashtagColor: .blue
+//            mentionColor: .gray
+            hashtagColor: .systemBlue
         )
             .padding()
     }
